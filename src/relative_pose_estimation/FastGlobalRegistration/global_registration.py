@@ -2,8 +2,8 @@ import numpy as np
 import copy
 import scipy.io as sio
 import sys
-sys.path.append('../../')
-from src.util import env, inverse
+sys.path.append('../../../')
+from util import env, inverse
 from sklearn.neighbors import NearestNeighbors as NN
 import open3d
 
@@ -67,7 +67,7 @@ def preprocess_point_cloud(pcd, voxel_size):
 
 def execute_global_registration(
         source_down, target_down, source_fpfh, target_fpfh, voxel_size):
-    distance_threshold = voxel_size * 1.5
+    distance_threshold = voxel_size * 5
     print(":: RANSAC registration on downsampled point clouds.")
     print("   Since the downsampling voxel size is %.3f," % voxel_size)
     print("   we use a liberal distance threshold %.3f." % distance_threshold)
@@ -81,7 +81,7 @@ def execute_global_registration(
     return result
 
 def refine_registration(source, target, source_fpfh, target_fpfh, voxel_size):
-    distance_threshold = voxel_size * 4
+    distance_threshold = voxel_size * 1.5
     print(":: Point-to-plane ICP registration is applied on original point")
     print("   clouds to refine the alignment. This time we use a strict")
     print("   distance threshold %.3f." % distance_threshold)
@@ -92,7 +92,7 @@ def refine_registration(source, target, source_fpfh, target_fpfh, voxel_size):
 
 
 if __name__ == "__main__":
-    voxel_size = 0.05 # means 5cm for the dataset
+    voxel_size = 0.02 # means 5cm for the dataset
     import argparse
     parser = argparse.ArgumentParser(description='Baseline Algorithm: Fast Global Registration')
     parser.add_argument('files', type=str, nargs='+', help='src, tgt, output')
@@ -112,9 +112,9 @@ if __name__ == "__main__":
     #        prepare_dataset(voxel_size)
     #draw_registration_result(src_pc, tgt_pc, Tij)
     open3d.estimate_normals(src_pc, search_param = open3d.KDTreeSearchParamHybrid(
-            radius = 0.1, max_nn = 30))
+            radius = 0.2, max_nn = 60))
     open3d.estimate_normals(tgt_pc, search_param = open3d.KDTreeSearchParamHybrid(
-            radius = 0.1, max_nn = 30))
+            radius = 0.2, max_nn = 60))
 	
     source_down, source_fpfh = preprocess_point_cloud(src_pc, voxel_size)
     target_down, target_fpfh = preprocess_point_cloud(tgt_pc, voxel_size)
@@ -136,8 +136,8 @@ if __name__ == "__main__":
     print('sigma= %f' % sigma) 
 
     terr = np.linalg.norm(Tij[np.newaxis, :3, 3] - result_icp.transformation[np.newaxis, :3, 3], 2)
-    #sio.savemat(args.files[2], mdict={'Tij': result_icp.transformation, 'src': sys.argv[1], 'tgt': sys.argv[2], 'sigma': sigma, 'aerr': aerr, 'terr': terr}, do_compression=True)
+    sio.savemat(args.files[2], mdict={'Tij': result_icp.transformation, 'src': args.files[0], 'tgt': args.files[1], 'sigma': sigma, 'aerr': aerr, 'terr': terr}, do_compression=True)
     print('src=%s, tgt=%s, sigma=%f, aerr = %f, terr = %f' % (args.files[0], args.files[1], sigma, aerr, terr))
     #print(result_icp)
-    draw_registration_result(src_pc, tgt_pc, result_icp.transformation)
-    draw_registration_result(src_pc, tgt_pc, Tij)
+    #draw_registration_result(src_pc, tgt_pc, result_icp.transformation)
+    #draw_registration_result(src_pc, tgt_pc, Tij)
