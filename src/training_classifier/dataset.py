@@ -42,8 +42,13 @@ def __decompose__(T):
         each contains a (image, label) pair
 """
 class MyDataset(Dataset):
-    def __init__(self, files):
-        self.files = files
+    """
+        Parse list file, each line contains a path to one sample file
+    """
+    def __init__(self, path2list):
+        with open(path2list, 'r') as fin:
+            lines = [line.strip() for line in fin.readlines()]
+        self.files = lines
 
     """
         FEEL FREE TO MODIFY THIS :)

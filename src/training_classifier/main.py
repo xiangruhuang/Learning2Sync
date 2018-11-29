@@ -15,11 +15,11 @@ import sys
 import argparse
 
 parser = argparse.ArgumentParser('Training Classifier for detecting good relative poses')
-parser.add_argument('--train_list', type=str, help='text file, each line contains the path to one training sample')
-parser.add_argument('--test_list', type=str, help='text file, each line contains the path to one testing sample')
-parser.add_argument('--cuda_device', type=int, default=1, help='which GPU to use')
-parser.add_argument('--dir', type=str, help='working directory to load or save models')
-parser.add_argument('--dump_folder', type=str, help='where to dump predicted results of training and testing samples')
+parser.add_argument('--train_list', type=str, default=None, help='text file, each line contains the path to one training sample {classification/train_list}')
+parser.add_argument('--test_list', type=str, default=None, help='text file, each line contains the path to one testing sample {classification/test_list}')
+parser.add_argument('--cuda_device', type=int, default=1, help='which GPU to use {1}')
+parser.add_argument('--dir', type=str, help='working directory to load or save models {classification/models}')
+parser.add_argument('--dump_folder', type=str, help='where to dump predicted results of training and testing samples {classification/results}')
 parser.add_argument('--num_epochs', type=int, default=50, help='the number of epochs to train {50}')
 parser.add_argument('--batch_size', type=int, default=100, help='size of each mini-batch {100}')
 parser.add_argument('--learning_rate', type=float, default=0.001, help='learning rate {0.001}')
@@ -36,6 +36,12 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 num_epochs = 500
 batch_size = 100
 learning_rate = 0.001
+
+if (args.train_list is None) or (args.test_list is None):
+    from util import env
+    home = env()
+    args.train_list = '%s/classification/train_list' % home
+    args.test_list = '%s/classification/test_list' % home
 
 train_dataset = MyDataset(args.train_list)
 
