@@ -67,7 +67,7 @@ class MyDataset(Dataset):
         data_dict = sio.loadmat(self.files[index])
         image = data_dict['image']
         label = int(data_dict['label'])
-        return (image, label)
+        return (image, label, self.files[index])
         #return (self.images[index], self.labels[index])
 
     """
