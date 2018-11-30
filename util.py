@@ -13,7 +13,7 @@ class Reader:
         self.PATH_PC = '%s/processed_dataset/{}/{}/{}.mat' % self.home
         self.PATH_SUMMARY = '%s/relative_pose/summary/{}/{}/{}.mat' % self.home
         self.PATH_SCENE = '%s/processed_dataset/{}' % self.home
-        #self.PATH_REL = '%s/relative_pose/{}/{}/{}_{}.mat' % self.home
+        self.PATH_REL = '%s/relative_pose/{}/{}/{}_{}.mat' % self.home
         self.PATH_SCAN = '%s/processed_dataset/{}/{}' % self.home
         
     def get_scanids(self, dataset, sceneid):
@@ -38,11 +38,9 @@ class Reader:
         home = env()
         return os.listdir('%s/processed_dataset/%s/' % (home, dataset))
         
-    #def read_transformation(self, dataset, source, sceneid):
-    #    assert 2 == len(model.split('/'))
-    #    rel = glob.glob(self.PATH_REL.format(dataset, sceneid, '*', source))
-    #    
-    #    return mat
+    def list_relative_poses(self, dataset, source, sceneid):
+        rel = glob.glob(self.PATH_REL.format(dataset, sceneid, '*', source)) 
+        return rel
 
 def inverse(T):
     R, t = decompose(T)

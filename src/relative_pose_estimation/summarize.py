@@ -35,7 +35,7 @@ for sceneid in reader.list_scenes(dataset):
     sigma = np.zeros((n, n))
     aerr = np.zeros((n, n))
     terr = np.zeros((n, n))
-    for mat in glob.glob('%s/%s/*_%s.mat' % (dataset, sceneid, source)):
+    for mat in reader.list_relative_poses(dataset, source, sceneid):
         s = sio.loadmat(mat)
         src, tgt = mat.split('/')[-1].split('.')[0].split('_')[:2]
         sid = scanid_map[src]
