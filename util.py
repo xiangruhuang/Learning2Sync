@@ -1,6 +1,8 @@
 import os, sys
 import numpy as np
 import pathlib
+import glob
+import scipy.io as sio
 
 def env():
     return ('/').join(os.path.abspath(__file__).split('/')[:-1])
@@ -21,9 +23,10 @@ class Reader:
         scanids = sorted(scanids)
         return scanids
 
-    def read_scan(self, dataset, sceneid, scanid):
+    def read_scan(self, dataset, sceneid, scanid, variable_names=None):
         mat = self.PATH_PC.format(dataset, sceneid, scanid)
-        mat = sio.loadmat(mat)
+        
+        mat = sio.loadmat(mat, variable_names=variable_names)
         return mat
 
     def read_summary(self, dataset, source, sceneid):

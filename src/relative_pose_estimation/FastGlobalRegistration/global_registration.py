@@ -132,7 +132,10 @@ if __name__ == "__main__":
     tree_tgt = NN(n_neighbors = 1, algorithm='kd_tree').fit(np.asarray(tgt_pc.points))
     distances, indices = tree_tgt.kneighbors(np.asarray(src_pc.points)) # [np, 1], [np, 1]
     idx = np.where(distances < 0.2)[0]
-    sigma = np.median(distances[idx])
+    if len(idx) == 0:
+        sigma = 1000000000
+    else:
+        sigma = np.median(distances[idx])
     print('sigma= %f' % sigma) 
 
     terr = np.linalg.norm(Tij[np.newaxis, :3, 3] - result_icp.transformation[np.newaxis, :3, 3], 2)

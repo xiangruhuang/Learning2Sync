@@ -8,6 +8,6 @@ Executable      = ./scannet/tasks.$(Process).sh
 Output		= ./logs/$(Process).out
 Error 		= ./logs/$(Process).err
 Log		= ./logs/$(Process).log
-arguments = $(Process) 100
+arguments = $(Process) 120
 
-Queue 100
+Queue 120

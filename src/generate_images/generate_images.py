@@ -121,12 +121,13 @@ def main():
         shapelist = [line.strip() for line in fin.readlines()]
         args.shapeid = shapelist[args.modelid]
     source =  args.source
-    PATH_RELATIVE = '%s/relative_pose/%s/%s/{}.mat' % (home, args.dataset, args.shapeid)
+
+    """ Reading Summarize Relative Poses """
+    PATH_SUMMARY = '%s/relative_pose/summary/%s/%s/%s.mat' % (home, args.dataset, args.source, args.shapeid)
     PATH_ABS = '%s/processed_dataset/%s/%s/{}.mat' % (home, args.dataset, args.shapeid)
-    mats = glob.glob(PATH_RELATIVE.format('*'))
-    np.random.shuffle(mats)
+    summary_mat = sio.loadmat(PATH_SUMMARY)
+    n = summary_mat['T'].shape[0] // 4
     model = '%s/%s' % (args.dataset, args.shapeid)
-    n = 100
     v = []
     idx = []
     T = []
@@ -149,33 +150,31 @@ def main():
         print('Failed at mkdir, command=%s' % command)
         res = os.system(command)
     
-    for mat_file in mats:
-        i, j = [int(token) for token in mat_file.split('/')[-1].split('.')[0].split('_')[:2]]
-        mat = sio.loadmat(mat_file)
-        Tij = mat['Tij']
-        if i > j:
-            tmp = i; i = j; j = tmp
-            Tij = inverse(Tij)
-        
-        assert abs(Tij[3, 3] - 1.0) < 1e-6
+    for i in range(n):
+        for j in range(i+1, n):
+            #i, j = [int(token) for token in mat_file.split('/')[-1].split('.')[0].split('_')[:2]]
+            #mat = sio.loadmat(mat_file)
+            Tij = summary_mat['T'][i*4:(i+1)*4, j*4:(j+1)*4]
+            
+            assert abs(Tij[3, 3] - 1.0) < 1e-6
 
-        Ti = T[i]; vi = v[i]; idx1 = idx[i]
-        Tj = T[j]; vj = v[j]; idx2 = idx[j]
-        
-        assert vi.shape[0] == 3
-        name = '%d_%d_%s_recover.mat' % (i, j, source)
-        
-        succeed = True
-        image, label, Tij_icp = generate_pair(Tij, i, j, vi, vj, Ti, Tj, idx1, idx2, False, source)
-        sio.savemat('%s/%s' % (dump_folder, name), {'image': image, 'label': label, 'Tij_icp': Tij_icp}, do_compression=True)
-        command = 'scp %s xrhuang@qhgroup-desktopi.csres.utexas.edu:%s/' % ('%s/%s' % (dump_folder, name), target_folder)
-        print(command)
-        res = os.system(command)
-        while res != 0:
-            print('Failed at scp, command=%s' % command)
-            res = os.system(command)
-        command = 'rm %s/%s' % (dump_folder, name)
-        os.system(command)
+            Ti = T[i]; vi = v[i]; idx1 = idx[i]
+            Tj = T[j]; vj = v[j]; idx2 = idx[j]
+            
+            assert vi.shape[0] == 3
+            name = '%d_%d_%s_recover.mat' % (i, j, source)
+            
+            succeed = True
+            image, label, Tij_icp = generate_pair(Tij, i, j, vi, vj, Ti, Tj, idx1, idx2, False, source)
+            sio.savemat('%s/%s' % (dump_folder, name), {'image': image, 'label': label, 'Tij_icp': Tij_icp}, do_compression=True)
+            command = 'scp %s xrhuang@qhgroup-desktopi.csres.utexas.edu:%s/' % ('%s/%s' % (dump_folder, name), target_folder)
+            print(command)
+            #res = os.system(command)
+            #while res != 0:
+            #    print('Failed at scp, command=%s' % command)
+            #    res = os.system(command)
+            command = 'rm %s/%s' % (dump_folder, name)
+            os.system(command)
         
 
  

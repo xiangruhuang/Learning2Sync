@@ -7,4 +7,4 @@ source activate py36
 
 offset=0
 a=$(( $offset + $1 ))
-python generate_dataset.py --modelid $a
+python generate_images.py --modelid $a

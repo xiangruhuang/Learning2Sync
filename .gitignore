@@ -1,3 +1,6 @@
 processed_dataset
 __pycache__
 dataset
+relative_pose/scannet
+relative_pose/redwood
+*logs

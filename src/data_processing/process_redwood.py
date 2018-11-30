@@ -85,8 +85,7 @@ def main():
     import open3d
     pcd_combined = open3d.PointCloud()
     for i, idx in enumerate(indices):
-        if i == 41:
-            import ipdb; ipdb.set_trace()
+        import ipdb; ipdb.set_trace()
         print('%d / %d' % (i, len(indices)))
         mesh = Mesh.read(depth_paths[idx], mode='depth', intrinsic = intrinsic)
         pcd = open3d.PointCloud()

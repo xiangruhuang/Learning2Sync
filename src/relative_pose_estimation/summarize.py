@@ -2,12 +2,13 @@ import os, sys
 import pathlib
 import glob
 import scipy.io as sio
-sys.path.append('../')
-from util import env, list_scenes, inverse, Reader
+sys.path.append('../../')
+from util import env, inverse, Reader
 import numpy as np
 import argparse
 
-parser = argparse.ArgumentParser(description='Summarize relative pose estimations into compact format (.mat)')
+parser = argparse.ArgumentParser(
+    description='Summarize relative pose estimations into .mat format')
 parser.add_argument('--dataset', type=str, default=None)
 parser.add_argument('--source', type=str, default=None)
 args = parser.parse_args()
@@ -21,10 +22,11 @@ home = env()
 dataset = args.dataset
 source = args.source
 
-pathlib.Path('%s/relative_pose/summary/%s/%s' % (home, dataset, source)).mkdir(exist_ok=True, parents=True)
+pathlib.Path('%s/relative_pose/summary/%s/%s' % (home, dataset, source)).mkdir(
+    exist_ok=True, parents=True)
 reader = Reader()
+PATH_SUMMARY = '%s/relative_pose/summary/{}/{}/{}.mat' % home
 for sceneid in reader.list_scenes(dataset):
-    scene = '%s/%s' % (dataset, sceneid)
     scanids = reader.get_scanids(dataset, sceneid)
     
     n = len(scanids)
@@ -51,6 +53,12 @@ for sceneid in reader.list_scenes(dataset):
     Tstar = np.zeros((n, 4, 4))
     
     for i, scanid in enumerate(scanids):
-        scan = reader.read_scan(dataset, sceneid, scanid)
+        scan = reader.read_scan(dataset, sceneid, scanid, variable_names=['pose'])
         Tstar[i, :, :] = scan['pose']
-    sio.savemat('summary/%s/%s/%s.mat' % (dataset, source, sceneid), mdict={'T': T, 'sigma': sigma, 'aerr': aerr, 'terr': terr, 'Tstar': Tstar}, do_compression=True)
+    print(sceneid)
+    output_mat = PATH_SUMMARY.format(dataset, source, sceneid)
+    sio.savemat(output_mat, 
+        mdict={'T': T, 'sigma': sigma, 
+            'aerr': aerr, 'terr': terr, 
+            'Tstar': Tstar}, 
+        do_compression=True)
