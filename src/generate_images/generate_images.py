@@ -4,7 +4,7 @@ import os
 from sklearn.neighbors import NearestNeighbors as NN
 import pathlib
 sys.path.append('../../')
-from util import inverse, env, angular_distance_np, decompose
+from util import inverse, env, angular_distance_np, decompose, pack
 import matplotlib.pyplot as plt
 import scipy.io as sio
 import argparse
@@ -16,11 +16,13 @@ def __get_label__(Rij, tij, Ti, Tj):
     """ Measure Quality of Edge """
     Ristar, tistar = decompose(Ti)
     Rjstar, tjstar = decompose(Tj)
+    Tij_gt = Tj.dot(inverse(Ti))
+    Tij_in = pack(Rij, tij)
 
     label = 0.0
     err_R = angular_distance_np(Rij[np.newaxis, :, :], Rjstar.dot(Ristar.T)[np.newaxis, :, :]).sum()
-    err_T = np.linalg.norm(Rij.dot(tistar) + tij - tjstar, 2)
-    if err_R < 30.0:
+    err_T = np.linalg.norm(Tij_gt[:3, 3] - Tij_in[:3, 3], 2)
+    if (err_R < 30.0) and (err_T < 0.2):
         label = 1.0
     else:
         label = 0.0
@@ -169,10 +171,10 @@ def main():
             sio.savemat('%s/%s' % (dump_folder, name), {'image': image, 'label': label, 'Tij_icp': Tij_icp}, do_compression=True)
             command = 'scp %s xrhuang@qhgroup-desktopi.csres.utexas.edu:%s/' % ('%s/%s' % (dump_folder, name), target_folder)
             print(command)
-            #res = os.system(command)
-            #while res != 0:
-            #    print('Failed at scp, command=%s' % command)
-            #    res = os.system(command)
+            res = os.system(command)
+            while res != 0:
+                print('Failed at scp, command=%s' % command)
+                res = os.system(command)
             command = 'rm %s/%s' % (dump_folder, name)
             os.system(command)
         
