@@ -50,13 +50,13 @@ class Mesh:
         # ret: Mesh
         '''
         image = cv2.imread(filename,2) / 1000.
-        imageuint8 = ((image-image.min())/(image.max()-image.min())*255).astype('uint8')
-        imageuint8 = np.tile(imageuint8[:,:,np.newaxis],[1,1,3])
-        pts,dess = self.getKeypoint(imageuint8)
-        self.ptsIdx = pts[:,1]*image.shape[1]+pts[:,0]
-        feat = np.zeros([image.shape[0]*image.shape[1], 128])
-        feat[self.ptsIdx] = dess
-        self.siftFeat = feat 
+        #imageuint8 = ((image-image.min())/(image.max()-image.min())*255).astype('uint8')
+        #imageuint8 = np.tile(imageuint8[:,:,np.newaxis],[1,1,3])
+        #pts,dess = self.getKeypoint(imageuint8)
+        #self.ptsIdx = pts[:,1]*image.shape[1]+pts[:,0]
+        #feat = np.zeros([image.shape[0]*image.shape[1], 128])
+        #feat[self.ptsIdx] = dess
+        #self.siftFeat = feat 
 
         self.height, self.width = image.shape
         h, w = image.shape
@@ -144,8 +144,8 @@ class Mesh:
         label[validId] = np.array(range(validId.sum()))
         self.vertex = self.vertex[:,validId]
         self.faces = label[self.faces].astype('int')
-        self.ptsIdx = label[self.ptsIdx].astype('int')
-        self.siftFeat=self.siftFeat[validId]
+        #self.ptsIdx = label[self.ptsIdx].astype('int')
+        #self.siftFeat=self.siftFeat[validId]
 
     def computeNormal(self):
         e12 = self.vertex[:,self.faces[1,:]] - self.vertex[:,self.faces[0,:]]

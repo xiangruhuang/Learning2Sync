@@ -1,5 +1,3 @@
-import numpy as np
-from scipy.stats import special_ortho_group as so
 from scipy.linalg import sqrtm
 import glob
 from scipy.linalg import block_diag
@@ -8,6 +6,7 @@ sys.path.append('../../../')
 from util import angular_distance_np, inverse, pack, decompose
 import scipy.io as sio
 import pathlib
+import numpy as np
 
 """
     Find a matrix Q \in O(n) such that \|A Q - B\|_F is minimized
@@ -196,6 +195,27 @@ def error(T, G):
 
     return np.mean(aerrs), np.mean(terrs)
 
+def errors(T, G):
+    aerrs = []
+    n = T.shape[0]
+    terrs = []
+    for i in range(n):
+        for j in range(i+1, n):
+            Ti = T[i, :, :]; Tj = T[j, :, :]
+            Gi = G[i, :, :]; Gj = G[j, :, :]
+            Tij = Tj.dot(inverse(Ti))
+            Gij = Gj.dot(inverse(Gi))
+            Rij = Tij[:3, :3]
+            Rij_gt = Gij[:3, :3]
+            fro = np.linalg.norm(Rij - Rij_gt, 'fro')
+            aerr = angular_distance_np(Rij[np.newaxis, :, :], Rij_gt[np.newaxis, :, :]).sum()
+            terr = np.linalg.norm(Tij[:3, 3]-Gij[:3, 3], 2)
+            aerrs.append(aerr)
+            terrs.append(terr)
+    aerrs = np.array(aerrs)
+    terrs = np.array(terrs)
+    return aerrs, terrs
+
 def coin(p):
     if np.random.uniform() < p:
         return 1
@@ -237,9 +257,14 @@ def max_existing_err(n, edges, R, t):
 #        if err > eps0 - 1e-12:
 #            edge['weight'] = 0.0
 
-def reweightEdges(n, edges, R, t, sigma_r, sigma_t):
-    theta1 = 2
+def sigmoid(x):
+    return 1.0 / (1 + np.exp(-x))
+
+def reweightEdges(n, edges, R, t, sigma_r, sigma_t, plot=False):
+    theta1 = 4
     terrs = []
+    if plot:
+        plots = []
     for edge in edges:
         i = edge['src']
         j = edge['tgt']
@@ -257,11 +282,18 @@ def reweightEdges(n, edges, R, t, sigma_r, sigma_t):
         if weight > 1.0:
             weight = 1.0
         
-        aerr_fro = np.linalg.norm(Tij_rec[:3, :3] - Tij_in[:3, :3], 'fro')
-        terr_fro = np.linalg.norm(Tij_rec[:3, 3] - Tij_in[:3, 3], 2)
+        aerr_fro = np.linalg.norm(Tij_rec[:3, :3] - Tij_in[:3, :3], 'fro') * sigmoid((0.5-weight)*5)
+        terr_fro = np.linalg.norm(Tij_rec[:3, 3] - Tij_in[:3, 3], 2) * sigmoid((0.5-weight)*5)
         #fro2 = aerr_fro ** 2 + terr_fro ** 2
-        edge['rotation_weight'] = (sigma_r ** theta1) / (sigma_r ** theta1 + aerr_fro ** (theta1) ) * weight
-        edge['translation_weight'] = (sigma_t ** theta1) / (sigma_t ** theta1 + terr_fro ** (theta1) ) * weight
+        edge['rotation_weight'] = (sigma_r ** theta1) / (sigma_r ** theta1 + aerr_fro ** (theta1) )
+        edge['translation_weight'] = (sigma_t ** theta1) / (sigma_t ** theta1 + terr_fro ** (theta1) )
+        if plot:
+            plots.append([aerr_fro, edge['rotation_weight']])
+    if plot:
+        plots = np.array(plots)
+        import matplotlib.pyplot as plt
+        plt.scatter(plots[:, 0], plots[:, 1])
+        plt.show()
 
 def computeStats(n, edges, R, t):
     cover = np.zeros(n, dtype=np.int32)
@@ -364,9 +396,9 @@ def IterativeTransfSync(n, edges, eps0=-1, decay=0.8, Tstar=None,
             terr = np.linalg.norm(Tij[:3, 3] - Tij_gt[:3, 3], 2)
             #p = 0.9
             if aerr > 30.0 or terr > 0.2:
-                weight = coin(0.03)
+                weight = 0.0 #coin(0.02)
             else:
-                weight = coin(0.9)
+                weight = 1.0 #coin(0.9)
             edge['predicted_weight'] = weight
             edge['translation_weight'] = weight
             edge['rotation_weight'] = weight
@@ -377,7 +409,7 @@ def IterativeTransfSync(n, edges, eps0=-1, decay=0.8, Tstar=None,
     err_bad = 0.0
     err_good = 0.0
     for edge in edges:
-        if edge['predicted_weight'] < 0.01:
+        if edge['predicted_weight'] < 0.5:
             continue
         sid = edge['src']; tid = edge['tgt']
         Ti = Tstar[sid]; Tj = Tstar[tid]
@@ -385,7 +417,8 @@ def IterativeTransfSync(n, edges, eps0=-1, decay=0.8, Tstar=None,
         Rij = edge['R']; tij = edge['t']
         Tij = pack(Rij, tij)
         aerr = angular_distance_np(Tij[np.newaxis, :3, :3], Tij_gt[np.newaxis, :3, :3]).sum()
-        if aerr > 30.0:
+        terr = np.linalg.norm(Tij[:3, 3] - Tij_gt[:3, 3], 2)
+        if aerr > 30.0 or terr > 0.2:
             #print(sid, tid, edge['predicted_weight'])
             bad_edges += 1
             err_bad += aerr * edge['predicted_weight']
@@ -407,7 +440,7 @@ def IterativeTransfSync(n, edges, eps0=-1, decay=0.8, Tstar=None,
                 eps0 = max_existing_err(n, edges, R, t)
 
         if reweight:
-            reweightEdges(n, edges, R, t, sigma_r=0.05, sigma_t=0.01)
+            reweightEdges(n, edges, R, t, sigma_r=0.01, sigma_t=0.01)
         else:
             truncatedWeightPredict(n, edges, R, t, eps0)
 

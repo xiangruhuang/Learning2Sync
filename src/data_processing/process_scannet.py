@@ -44,7 +44,7 @@ PATH_POSE = '%s/dataset/scannet/{}/{}.pose.txt' % data_path
 PATH_DEPTH = '%s/dataset/scannet/{}/{}.depth.pgm' % data_path
 PATH_MAT = '%s/processed_dataset/scannet/{}/{}.mat' % data_path
 
-parser = argparse.ArgumentParser(description='Process Redwood Dataset')
+parser = argparse.ArgumentParser(description='Process Scannet Dataset')
 parser.add_argument('--shapeid', type=str)
 
 args = parser.parse_args()
@@ -81,13 +81,61 @@ def getData(shapeid):
             flag = False
         if not flag:
             print('ignoring frame {}'.format(frameid))
-            assert False
+            continue
         poses.append(tmp)
         depth_paths.append(depth_path)
         pose_paths.append(pose_fp)
-
-    T = np.concatenate(poses).reshape(-1,4,4)
+    if len(poses) == 0:
+        T = None
+    else:
+        T = np.concatenate(poses).reshape(-1,4,4)
     return depth_paths, T, pose_paths
+
+def pick_frames(frame_ids, max_gap, num_sample):
+    if len(frame_ids) < num_sample:
+        return None
+    last_f = -10000
+    ans = []
+    maximal_interval = []
+    max_interval_length = -1
+    frame_ids.append(1000000000)
+    for i, f in enumerate(frame_ids):
+        if f - last_f > max_gap:
+            if len(ans) > max_interval_length:
+                maximal_interval = ans
+                max_interval_length = len(ans)
+            ans = []
+        ans.append(i)
+        last_f = f
+    
+    if max_interval_length < num_sample:
+        return None
+    counter = 1
+    st = np.random.randint(max_interval_length - num_sample)
+    ans = [st]
+    for i in range(st+1, max_interval_length):
+        if (maximal_interval[i] > ans[-1]) and (
+            frame_ids[maximal_interval[i]] - frame_ids[ans[-1]] > max_gap):
+            ans.append(maximal_interval[i-1])
+            counter += 1
+            if counter == num_sample:
+                break
+    num_trial = 10000
+    while (counter < num_sample) and (num_trial > 0):
+        j = np.random.randint(st, max_interval_length)
+        idx = maximal_interval[j]
+        num_trial -= 1
+        if idx in ans:
+            continue
+        ans.append(idx)
+        counter += 1
+    if len(ans) < num_sample:
+        ans = None
+    else:
+        ans = sorted(ans)
+
+    return ans 
+        
 
 def main():
     depth_paths, T, pose_paths = getData(args.shapeid)
@@ -96,20 +144,26 @@ def main():
     intrinsic = parse_info('%s/dataset/scannet/%s/_info.txt' % (data_path, args.shapeid))
     np.random.seed(816)
     num_sample = 100
-    if n < 10*num_sample:
-        stepsize = n // num_sample
-    else:
-        stepsize = 10
-    if stepsize == 0:
-        assert False
-    indices = [i for i in range(0, n, stepsize)][:num_sample] #np.random.permutation(n)
+    #if n < 5*num_sample:
+    #    stepsize = n // num_sample
+    #else:
+    #    stepsize = 5
+    #if stepsize == 0:
+    #    assert False
+    #indices = [i for i in range(0, n, stepsize)][:num_sample] #np.random.permutation(n)
+    frame_ids = [int(depth_paths[i].split('/')[-1].split('.')[0].split('-')[-1]) for i in range(n)]
+    indices = pick_frames(frame_ids, max_gap=6, num_sample = num_sample)
+    if indices is None:
+        print('not enough valid frames')
+        exit(0)
+    print([frame_ids[idx] for idx in indices])
     #print(indices[:100])
     #indices = sorted(indices)
     make_dirs(PATH_MAT.format(args.shapeid, 0))
     #import open3d
     #pcd_combined = open3d.PointCloud()
     for i, idx in enumerate(indices):
-        print('%d / %d' % (i, len(indices)))
+        #print('%d / %d' % (i, len(indices)))
         mesh = Mesh.read(depth_paths[idx], mode='depth', intrinsic = intrinsic)
         #pcd = open3d.PointCloud()
         #pcd.points = open3d.Vector3dVector(mesh.vertex.T)
@@ -126,7 +180,7 @@ def main():
         #if (i + 1) % 100 == 0:
         #    pcd_combined_down = open3d.voxel_down_sample(pcd_combined, voxel_size=0.02)
         #    open3d.draw_geometries([pcd_combined_down])
-            
+    
 
     #pcd_combined_down = open3d.voxel_down_sample(pcd_combined, voxel_size=0.02)
     #open3d.draw_geometries([pcd_combined_down])

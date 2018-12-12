@@ -12,6 +12,7 @@ from CNN import *
 import scipy.io as sio
 import os
 import argparse
+import pickle
 
 parser = argparse.ArgumentParser(
     'Training Classifier for detecting good relative poses')
@@ -58,7 +59,13 @@ if args.dump_folder is None:
     from util import env
     home = env()
     args.dump_folder = '%s/classification/results' % home
-    
+   
+if args.dir is None:
+    import sys
+    sys.path.append('../../')
+    from util import env
+    home = env()
+    args.dir = '%s/classification/models' % home
 
 train_dataset = MyDataset(args.train_list)
 
@@ -75,12 +82,12 @@ print('%d training samples, %d test samples' % (
 # Data loader
 train_loader = torch.utils.data.DataLoader(dataset=train_dataset,
                                            batch_size=batch_size,
-                                           num_workers=4,
+                                           num_workers=2,
                                            shuffle=True)
 
 test_loader = torch.utils.data.DataLoader(dataset=test_dataset, 
                                           batch_size=batch_size, 
-                                          num_workers=4,
+                                          num_workers=2,
                                           shuffle=False)
 
 
@@ -109,15 +116,14 @@ if len(checkpoints) != 0:
     dump_dict = {}
     for name, param in model.named_parameters():
         if param.requires_grad:
-            print(name)
             if ('fc2' in name):
-                print(name)
+                print('recording %s' % name)
                 dump_dict[name] = np.array(param.data)
                 #sio.savemat('%s_25_%s.mat' % (dataset, name), mdict={name: np.array(param.data)})
 filelist = train_dataset.files + test_dataset.files
 
 start_epoch = 0
-while os.path.exists('%s/%d.mat' % (args.dump_folder, start_epoch)):
+while os.path.exists('%s/%d.p' % (args.dump_folder, start_epoch)):
     start_epoch += 1
 
 for epoch in range(start_epoch, num_epochs):
@@ -148,9 +154,7 @@ for epoch in range(start_epoch, num_epochs):
             print ('Epoch [{}/{}], Step [{}/{}], Loading Time: {:.4f}, Loss: {:.4f}' 
                    .format(epoch+1, num_epochs, i+1, total_step, loading_time, loss.item()))
             start_time = time.time()
-        if (i+1) % 800 == 0:
-            save_checkpoint(save_counter, model, optimizer, prefix)
-            save_counter += 1
+    save_checkpoint(epoch, model, optimizer, prefix)
     with torch.no_grad():
         correct1 = 0
         correct0 = 0
@@ -188,8 +192,31 @@ for epoch in range(start_epoch, num_epochs):
         dump_dict['gt'] = ground_truths
         dump_dict['feat'] = feats
         dump_dict['files'] = sample_files
-        assert not os.path.exists('%s/%d.mat' % (args.dump_folder, epoch))
-        sio.savemat('%s/%d.mat' % (args.dump_folder, epoch), mdict=dump_dict)
+        scene_dicts = {}
+        n = 100
+        for i in range(len(sample_files)):
+            f = sample_files[i]
+            scene = f.split('/')[-2]
+            scene_dict = scene_dicts.get(scene, None)
+            if scene_dict is None:
+                scene_dict = {}
+                scene_dict['gt'] = np.zeros((n, n))
+                scene_dict['predict'] = np.zeros((n, n))
+                scene_dict['feat'] = np.zeros((n, n, 128))
+            src, tgt = [int(token) for token in f.split('/')[-1].split('_')[:2]]
+            
+            feat = feats[i]
+            gt = ground_truths[i]
+            pred = preds[i]
+            scene_dict['gt'][src, tgt] = gt
+            scene_dict['predict'][src, tgt] = pred
+            scene_dict['feat'][src, tgt, :] = feat
+            scene_dicts[scene] = scene_dict
+            
+        assert not os.path.exists('%s/%d.p' % (args.dump_folder, epoch))
+        with open('%s/%d.p' % (args.dump_folder, epoch), 'wb') as fout:
+            pickle.dump(scene_dicts, fout)
+        #sio.savemat('%s/%d.mat' % (args.dump_folder, epoch), mdict=parsed_dict)
     except Exception as e:
         print(e)
         import ipdb; ipdb.set_trace()
