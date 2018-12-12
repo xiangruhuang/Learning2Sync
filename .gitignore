@@ -1,4 +1,5 @@
-processed_dataset
+processed_dataset/scannet*
+processed_dataset/redwood*
 __pycache__
 dataset
 relative_pose/scannet

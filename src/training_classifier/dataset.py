@@ -64,9 +64,21 @@ class MyDataset(Dataset):
         `label`: int
     """
     def __getitem__(self, index):
-        data_dict = sio.loadmat(self.files[index])
-        image = data_dict['image']
-        label = int(data_dict['label'])
+        flag = False
+        while not flag:
+            flag = True
+            try:
+                data_dict = sio.loadmat(self.files[index])
+                image = data_dict['image']
+                label = int(data_dict['label'])
+            except Exception as e:
+                print(e)
+                print('%s is corrupted.' % self.files[index])
+                flag = False
+                index = index + 1
+                if index >= len(self.files):
+                    index = 0
+            
         return (image, label, self.files[index])
         #return (self.images[index], self.labels[index])
 

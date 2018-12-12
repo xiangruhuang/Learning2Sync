@@ -114,13 +114,12 @@ def read_transformation(model, suffix):
 def main():
     parser = argparse.ArgumentParser(description='Generate Images for Network Training')
     parser.add_argument('--dataset', type=str, default='scannet')
-    parser.add_argument('--modelid', type=int)
+    parser.add_argument('--scene', type=str)
     parser.add_argument('--source', type=str, default='fgr')
+    parser.add_argument('--remake', type=str)
     args = parser.parse_args()
-    with open('%s.list' % args.dataset, 'r') as fin:
-        shapelist = [line.strip() for line in fin.readlines()]
-        args.shapeid = shapelist[args.modelid]
-    source =  args.source
+    args.shapeid = args.scene
+    source = args.source
 
     """ Reading Summarize Relative Poses """
     PATH_SUMMARY = '%s/relative_pose/summary/%s/%s/%s.mat' % (home, args.dataset, args.source, args.shapeid)
@@ -138,20 +137,18 @@ def main():
         T.append(mat_i['pose'])
 
     """ Creating Data Folders """
-    dump_folder = '%s/classifier_training/%s/%s/' % (home, args.dataset, args.shapeid)
     if args.dataset == 'redwood':
-        target_folder = '/media/xrhuang/DATA/%s/%s' % (args.dataset, args.shapeid)
+        dump_folder = '/media/xrhuang/DATA/%s/%s' % (args.dataset, args.shapeid)
     else:
-        target_folder = '/media/xrhuang/DATA1/%s/%s' % (args.dataset, args.shapeid)
+        dump_folder = '/media/xrhuang/DATA1/%s/%s' % (args.dataset, args.shapeid)
     pathlib.Path(dump_folder).mkdir(exist_ok=True, parents=True)
-    command = 'ssh xrhuang@qhgroup-desktopi.csres.utexas.edu mkdir -p %s' % target_folder
-    res = os.system(command)
-    while res != 0:
-        print('Failed at mkdir, command=%s' % command)
-        res = os.system(command)
     
     for i in range(n):
         for j in range(i+1, n):
+            name = '%d_%d' % (i, j)
+            if not (name == args.remake):
+                continue
+            print(i, j)
             #i, j = [int(token) for token in mat_file.split('/')[-1].split('.')[0].split('_')[:2]]
             #mat = sio.loadmat(mat_file)
             Tij = summary_mat['T'][i*4:(i+1)*4, j*4:(j+1)*4]
@@ -164,17 +161,10 @@ def main():
             assert vi.shape[0] == 3
             name = '%d_%d_%s_recover.mat' % (i, j, source)
             
-            succeed = True
             image, label, Tij_icp = generate_pair(Tij, i, j, vi, vj, Ti, Tj, idx1, idx2, False, source)
-            sio.savemat('%s/%s' % (dump_folder, name), {'image': image, 'label': label, 'Tij_icp': Tij_icp}, do_compression=True)
-            command = 'scp %s xrhuang@qhgroup-desktopi.csres.utexas.edu:%s/' % ('%s/%s' % (dump_folder, name), target_folder)
-            print(command)
-            res = os.system(command)
-            while res != 0:
-                print('Failed at scp, command=%s' % command)
-                res = os.system(command)
-            command = 'rm %s/%s' % (dump_folder, name)
-            os.system(command)
+            print(dump_folder, name)
+            sio.savemat('%s/%s' % (dump_folder, name), {'image': image, 'label': label, 'Tij_icp': Tij_icp}, do_compression=False)
+            mat = sio.loadmat('%s/%s' % (dump_folder, name))
         
 
  
