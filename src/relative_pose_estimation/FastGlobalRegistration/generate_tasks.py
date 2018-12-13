@@ -29,6 +29,8 @@ def main():
             
             for i in range(n):
                 for j in range(i+1, n):
+                    if (j - i > 20):
+                        continue
                     #if np.random.rand() > 0.01:
                     #    continue
                     output_folder = PATH_RELATIVE.format(modelname) 
