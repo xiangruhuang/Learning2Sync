@@ -87,7 +87,8 @@ def from_mat(mat_file, label_dict=None, cheat=False, scheme='reweight'):
             edge['src'] = i
             edge['tgt'] = j
             Tij = T[i*4:(i+1)*4, j*4:(j+1)*4]
-            assert abs(Tij[3, 3] - 1.0) < 1e-3
+            if abs(Tij[3, 3] - 1.0) > 1e-3:
+                continue
             R = Tij[:3, :3]
             assert np.linalg.norm(R.dot(R.T) - np.eye(3), 'fro') < 1e-3
             assert np.linalg.det(R) > 0.01

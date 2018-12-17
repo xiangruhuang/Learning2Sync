@@ -9,8 +9,11 @@ import argparse
 
 parser = argparse.ArgumentParser(
     description='Summarize relative pose estimations into .mat format')
-parser.add_argument('--dataset', type=str, default=None)
-parser.add_argument('--source', type=str, default=None)
+parser.add_argument('--dataset', type=str, default=None,
+    help='scannet or redwood'
+    )
+parser.add_argument('--source', type=str, default=None,
+    help='fgr')
 args = parser.parse_args()
 
 if args.dataset is None:
