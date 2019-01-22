@@ -1,16 +1,14 @@
 DATA FORMAT:
-For space and legacy issues, this folder do not contain any dataset.
-
+For space and legacy issues, this folder do not contain any data from any dataset.
 We demonstrate our data format using a few examples: 
 
 An example file hierarchy we use to store processed depth images of each dataset looks like
   "processed_dataset/scannet/scene0000_01/0.mat", which corresponds to 
     the 1st scan for scene id "scene0000_01" of "scannet" dataset.
-  each mat file contains attributes ['vertex', 'validIdx_rowmajor', 'pose']. 
-  We will introduce each attribute as follows:
-  
-  
-    
+  each mat file contains three attributes ['vertex', 'validIdx_rowmajor', 'pose']. 
+  `vertex`: np.ndarray of shape (n, 3)
+  `validIdx_rowmajor`: np.ndarray of shape (n, 1)
+  `pose`: np.ndarray of shape (4, 4) representing the ground truth absolute pose of this scan.
 
 RELATIVE POSE ESTIMATION:
 1. The source code of relative pose estimation is stored in "src/relative_pose_estimation"
@@ -27,5 +25,9 @@ CLASSIFICATION:
 
 
 Optimizing Parameters of Weighting Module:
-1. Given a trained classifier, we collect features for each estimated pairwise relative pose.
-2. 
+1. Given a trained classifier, we collect features for each estimated pairwise relative pose, 
+  please refer to "src/training_classifier/main.py".
+2. To further optimize parameters of the weighting module, please refer to src/differentiable_sync/train.py.
+  (Use python train.py -h to see the instructions of how to run this code).
+
+
