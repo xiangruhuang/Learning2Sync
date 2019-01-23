@@ -10,9 +10,12 @@ Please contact the owners of the datasets to obtain the data.
 The whole pipeline of our approach contains four steps, which are
 
 > I. Data Preprocessing.
-II. Relative Pose Estimation.
-III. Training Classifier.
-IV. Optimizing Parameters.
+
+> II. Relative Pose Estimation.
+
+> III. Training Classifier.
+
+> IV. Optimizing Parameters.
 
 Notice that step I and II can be skipped if you would like to run other relative pose estimation code and fed the result as the input of step III.
 Step III can be skipped if you would like to use classifiers pretrained on Redwood or Scannet. 
