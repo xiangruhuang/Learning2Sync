@@ -1,7 +1,8 @@
 # Learning Transformation Synchronization
+![alt text](https://www.cs.utexas.edu/~xrhuang/Learning2Sync/RecurrentNetwork1.pdf)
 Python implementation of our approach on Learning Transformation Synchronization.
 
-## Dataset:
+## Data Acquisition:
 The datasets we used are "Redwood" and "Scannet". 
 However, for space and license issues, this repository do not contain any data.
 Please contact the owners of the datasets to obtain the data.
