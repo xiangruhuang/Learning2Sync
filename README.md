@@ -29,11 +29,11 @@ into a certain format.
 Here we demonstrate the data format after our data processing procedure. 
 
 An example file hierarchy we use to store processed depth images of each dataset looks like
-  > "processed_dataset/scannet/scene0000_01/0.mat"
+  > processed_dataset/scannet/scene0000_01/0.mat
 
-which corresponds to the first scan for scene id "scene0000_01" of "scannet" dataset.
+which corresponds to the first scan for scene id `scene0000_01` of `scannet` dataset.
 
-Each .mat file contains three attributes ['vertex', 'validIdx_rowmajor', 'pose']. 
+Each .mat file contains three attributes [`vertex`, `validIdx_rowmajor`, `pose`]. 
 
   `vertex`: np.ndarray of shape (3, n), where n is the number of valid points in the depth image.
 
@@ -50,10 +50,10 @@ We use Fast Global Registration and Super4PCS to
 2. By default, results will be stored in "relative_pose", e.g. 
   > "relative_pose/scannet/scene0000_01/0_2_fgr.mat"
   
-corresponds to relative pose estimation from the first scan to the third scan for scene "scene0000_01" 
-for the algorithm "Fast Global Registration".
+corresponds to relative pose estimation from the first scan to the third scan for scene `scene0000_01` 
+for the algorithm `Fast Global Registration`.
 
-3. In the mat file, attribute 'Tij' corresponds to a np.ndarray of shape (4, 4) representing the relative pose estimated.
+3. In the mat file, attribute `Tij` corresponds to a np.ndarray of shape (4, 4) representing the relative pose estimated.
 
 ## Step III. Training Classifiers:
 1. We first generate images for each estimated pairwise relative pose, the code is stored in `src/generate_images`
