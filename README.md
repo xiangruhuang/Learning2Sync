@@ -34,8 +34,11 @@ An example file hierarchy we use to store processed depth images of each dataset
 which corresponds to the first scan for scene id "scene0000_01" of "scannet" dataset.
 
 Each .mat file contains three attributes ['vertex', 'validIdx_rowmajor', 'pose']. 
+
   `vertex`: np.ndarray of shape (3, n), where n is the number of valid points in the depth image.
+
   `validIdx_rowmajor`: np.ndarray of shape (1, n).
+
   `pose`: np.ndarray of shape (4, 4) representing the ground truth absolute pose of this scan.
 
 ## Step II. Relative Pose Estimation:
@@ -53,13 +56,13 @@ for the algorithm "Fast Global Registration".
 3. In the mat file, attribute 'Tij' corresponds to a np.ndarray of shape (4, 4) representing the relative pose estimated.
 
 ## Step III. Training Classifiers:
-1. We first generate images for each estimated pairwise relative pose, the code is stored in "src/generate_images"
-2. We then train our classifiers using the generated images, the code is stored in "src/training_classifiers"
-3. The results will be stored in "classification/".
+1. We first generate images for each estimated pairwise relative pose, the code is stored in `src/generate_images`
+2. We then train our classifiers using the generated images, the code is stored in `src/training_classifiers`
+3. The results will be stored in `classification/`.
 
 ## Step IV. Optimizing Parameters:
 1. Given a trained classifier, we collect features for each estimated pairwise relative pose, 
-  please refer to "src/training_classifier/main.py".
-2. To further optimize parameters of the weighting module, please refer to src/differentiable_sync/train.py.
-  (Use python train.py -h to see the instructions of how to run this code).
+  please refer to `src/training_classifier/main.py`.
+2. To further optimize parameters of the weighting module, please refer to `src/differentiable_sync/train.py`.
+  (Use `python train.py -h` to see the instructions of how to run this code).
 
