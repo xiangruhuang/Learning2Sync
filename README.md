@@ -4,10 +4,11 @@ Implementation of our approach on Learning Transformation Synchronization.
 
 ## DATA FORMAT:
 For space and legacy issues, this folder do not contain any data from any dataset.
-We demonstrate our data format using a few examples: 
+
+Here we demonstrate the data format after our data processing procedure:
 
 An example file hierarchy we use to store processed depth images of each dataset looks like
-  "processed_dataset/scannet/scene0000_01/0.mat", which corresponds to 
+  > "processed_dataset/scannet/scene0000_01/0.mat", which corresponds to 
     the 1st scan for scene id "scene0000_01" of "scannet" dataset.
   each mat file contains three attributes ['vertex', 'validIdx_rowmajor', 'pose']. 
   `vertex`: np.ndarray of shape (n, 3)
