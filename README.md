@@ -1,5 +1,5 @@
 # Learning Transformation Synchronization
-![alt text](https://www.cs.utexas.edu/~xrhuang/Learning2Sync/RecurrentNetwork1.pdf)
+![alt tag](https://www.cs.utexas.edu/~xrhuang/Learning2Sync/RecurrentNetwork1.png)
 Python implementation of our approach on Learning Transformation Synchronization.
 
 ## Data Acquisition:
