@@ -1,4 +1,8 @@
-DATA FORMAT:
+# Learning Transformation Synchronization
+Implementation of our approach on Learning Transformation Synchronization.
+
+
+## DATA FORMAT:
 For space and legacy issues, this folder do not contain any data from any dataset.
 We demonstrate our data format using a few examples: 
 
@@ -10,7 +14,7 @@ An example file hierarchy we use to store processed depth images of each dataset
   `validIdx_rowmajor`: np.ndarray of shape (n, 1)
   `pose`: np.ndarray of shape (4, 4) representing the ground truth absolute pose of this scan.
 
-RELATIVE POSE ESTIMATION:
+## RELATIVE POSE ESTIMATION:
 1. The source code of relative pose estimation is stored in "src/relative_pose_estimation"
  We use Fast Global Registration and Super4PCS to
     obtain pairwise relative pose estimation.
@@ -18,13 +22,13 @@ RELATIVE POSE ESTIMATION:
 2. By default, results will be stored in "relative_pose".
 
 
-CLASSIFICATION:
+## CLASSIFICATION:
 1. We first generate images for each estimated pairwise relative pose, the code is stored in "src/generate_images"
 2. We then train our classifiers using the generated images, the code is stored in "src/training_classifiers"
 3. The results will be stored in "classification/".
 
 
-Optimizing Parameters of Weighting Module:
+## Optimizing Parameters of Weighting Module:
 1. Given a trained classifier, we collect features for each estimated pairwise relative pose, 
   please refer to "src/training_classifier/main.py".
 2. To further optimize parameters of the weighting module, please refer to src/differentiable_sync/train.py.
