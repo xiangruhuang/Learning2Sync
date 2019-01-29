@@ -19,23 +19,19 @@ def main():
     with open('%s/tasks' % dataset, 'w') as fout:
         lines = []
         for model in models:
-            objs = glob.glob('%s/*' % model)
+            objs = glob.glob('%s/*.mat' % model)
             modelname = ('/').join(model.split('/')[-2:])
-            #print(modelname)
             #import ipdb; ipdb.set_trace()
             n = len(objs)
             basename = [int(obji.split('/')[-1].split('.')[0]) for obji in objs]
-            basename.sort()
             
+            output_folder = PATH_RELATIVE.format(modelname) 
+            #'%s/relative_pose/%s' % (data_path, modelname)
+            pathlib.Path(output_folder).mkdir(exist_ok = True, parents = True)
             for i in range(n):
-                for j in range(i+1, n):
-                    if (j - i > 20):
-                        continue
+                for j in range(i+1, n): 
                     #if np.random.rand() > 0.01:
                     #    continue
-                    output_folder = PATH_RELATIVE.format(modelname) 
-                    #'%s/relative_pose/%s' % (data_path, modelname)
-                    pathlib.Path(output_folder).mkdir(exist_ok = True, parents = True)
                     output_file = '{}/{}_{}_fgr.mat'.format(output_folder, basename[i], basename[j])
                     
                     command = 'python global_registration.py %s %s %s' % (objs[i], objs[j], output_file)

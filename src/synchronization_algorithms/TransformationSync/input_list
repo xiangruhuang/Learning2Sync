@@ -24,11 +24,9 @@
 ../../../relative_pose/summary/scannet/fgr/scene0097_00.mat
 ../../../relative_pose/summary/scannet/fgr/scene0102_00.mat
 ../../../relative_pose/summary/scannet/fgr/scene0112_00.mat
-../../../relative_pose/summary/scannet/fgr/scene0123_00.mat
 ../../../relative_pose/summary/scannet/fgr/scene0124_00.mat
 ../../../relative_pose/summary/scannet/fgr/scene0129_00.mat
 ../../../relative_pose/summary/scannet/fgr/scene0133_00.mat
-../../../relative_pose/summary/scannet/fgr/scene0134_01.mat
 ../../../relative_pose/summary/scannet/fgr/scene0146_02.mat
 ../../../relative_pose/summary/scannet/fgr/scene0157_00.mat
 ../../../relative_pose/summary/scannet/fgr/scene0158_01.mat
@@ -63,14 +61,11 @@
 ../../../relative_pose/summary/scannet/fgr/scene0314_00.mat
 ../../../relative_pose/summary/scannet/fgr/scene0316_00.mat
 ../../../relative_pose/summary/scannet/fgr/scene0317_01.mat
-../../../relative_pose/summary/scannet/fgr/scene0319_00.mat
 ../../../relative_pose/summary/scannet/fgr/scene0321_00.mat
-../../../relative_pose/summary/scannet/fgr/scene0334_00.mat
 ../../../relative_pose/summary/scannet/fgr/scene0335_01.mat
 ../../../relative_pose/summary/scannet/fgr/scene0338_00.mat
 ../../../relative_pose/summary/scannet/fgr/scene0340_00.mat
 ../../../relative_pose/summary/scannet/fgr/scene0346_00.mat
-../../../relative_pose/summary/scannet/fgr/scene0353_00.mat
 ../../../relative_pose/summary/scannet/fgr/scene0354_00.mat
 ../../../relative_pose/summary/scannet/fgr/scene0358_02.mat
 ../../../relative_pose/summary/scannet/fgr/scene0361_02.mat
@@ -93,7 +88,6 @@
 ../../../relative_pose/summary/scannet/fgr/scene0457_00.mat
 ../../../relative_pose/summary/scannet/fgr/scene0461_00.mat
 ../../../relative_pose/summary/scannet/fgr/scene0465_01.mat
-../../../relative_pose/summary/scannet/fgr/scene0466_01.mat
 ../../../relative_pose/summary/scannet/fgr/scene0473_00.mat
 ../../../relative_pose/summary/scannet/fgr/scene0475_00.mat
 ../../../relative_pose/summary/scannet/fgr/scene0478_01.mat
@@ -120,7 +114,6 @@
 ../../../relative_pose/summary/scannet/fgr/scene0584_00.mat
 ../../../relative_pose/summary/scannet/fgr/scene0586_02.mat
 ../../../relative_pose/summary/scannet/fgr/scene0587_01.mat
-../../../relative_pose/summary/scannet/fgr/scene0588_02.mat
 ../../../relative_pose/summary/scannet/fgr/scene0594_00.mat
 ../../../relative_pose/summary/scannet/fgr/scene0602_00.mat
 ../../../relative_pose/summary/scannet/fgr/scene0607_00.mat
@@ -146,7 +139,6 @@
 ../../../relative_pose/summary/scannet/fgr/scene0680_00.mat
 ../../../relative_pose/summary/scannet/fgr/scene0685_01.mat
 ../../../relative_pose/summary/scannet/fgr/scene0692_01.mat
-../../../relative_pose/summary/scannet/fgr/scene0694_00.mat
 ../../../relative_pose/summary/scannet/fgr/scene0696_00.mat
 ../../../relative_pose/summary/scannet/fgr/scene0697_00.mat
 ../../../relative_pose/summary/scannet/fgr/scene0706_00.mat
