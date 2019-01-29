@@ -8,6 +8,8 @@ from util import env, make_dirs
 
 dataset = 'scannet'
 
+param ='-o 0.7 -d 0.01 -t 1000 -n 200'
+
 def main():
     data_path = env()
 
@@ -19,7 +21,7 @@ def main():
     with open('%s/tasks' % dataset, 'w') as fout:
         lines = []
         for model in models:
-            objs = glob.glob('%s/*.mat' % model)
+            objs = glob.glob('%s/*.obj' % model)
             modelname = ('/').join(model.split('/')[-2:])
             #import ipdb; ipdb.set_trace()
             n = len(objs)
@@ -30,11 +32,9 @@ def main():
             pathlib.Path(output_folder).mkdir(exist_ok = True, parents = True)
             for i in range(n):
                 for j in range(i+1, n): 
-                    #if np.random.rand() > 0.01:
-                    #    continue
-                    output_file = '{}/{}_{}_fgr.mat'.format(output_folder, basename[i], basename[j])
+                    output_file = '{}/{}_{}_super4pcs.txt'.format(output_folder, basename[i], basename[j])
                     
-                    command = 'python global_registration.py %s %s %s' % (objs[i], objs[j], output_file)
+                    command = './Super4PCS -i %s %s %s -m %s' % (objs[i], objs[j], param, output_file)
                     #print(command)
                     lines.append(command)
                     #fout.write('%s\n' % command)

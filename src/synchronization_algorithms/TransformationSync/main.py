@@ -102,8 +102,8 @@ def from_mat(mat_file, label_dict=None, cheat=False, scheme='reweight'):
             edge['translation_weight'] = weight
             edge['predicted_weight'] = weight
             edges.append(edge)
-
-    Tsync = IterativeTransfSync(n, edges, Tstar = Tstar, cheat=cheat, scheme=scheme, max_iter=20)
+    print('#edges=%d' % len(edges))
+    Tsync = IterativeTransfSync(n, edges, Tstar = Tstar, cheat=cheat, scheme=scheme, max_iter=5)
     aerrs, terrs = errors(Tsync, Tstar)
     return aerrs, terrs
 

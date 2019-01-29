@@ -1,7 +1,7 @@
 import numpy as np
 import scipy.io as sio
 import sys
-sys.path.append('../')
+sys.path.append('../../')
 from util import env
 import glob
 import argparse
