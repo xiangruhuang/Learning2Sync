@@ -8,6 +8,6 @@ Executable      = ./run.sh
 Output		= ./scannet_logs/$(Process).out
 Error 		= ./scannet_logs/$(Process).err
 Log		= ./scannet_logs/$(Process).log
-arguments = $(Process) 57
+arguments = $(Process) 100
 
-Queue 57
+Queue 100

@@ -19,6 +19,9 @@ def main():
     with open('%s/tasks' % dataset, 'w') as fout:
         lines = []
         for model in models:
+            if not 'scene0334_00' in model:
+                if not 'scene0134_01' in model:
+                    continue
             objs = glob.glob('%s/*.mat' % model)
             modelname = ('/').join(model.split('/')[-2:])
             #import ipdb; ipdb.set_trace()
