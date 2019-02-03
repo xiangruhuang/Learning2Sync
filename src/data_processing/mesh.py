@@ -91,12 +91,12 @@ class Mesh:
         faces = faces[:,label[faces].min(0) > 0]
         
         ## Delete huge faces
-        e12 = np.linalg.norm(vertex[faces[1,:],:] - vertex[faces[0,:],:],axis=1)
-        e23 = np.linalg.norm(vertex[faces[2,:],:] - vertex[faces[1,:],:],axis=1)
-        e31 = np.linalg.norm(vertex[faces[0,:],:] - vertex[faces[2,:],:],axis=1)
-        med = np.median(np.concatenate((e12,e23,e31)))
-        validId = np.logical_and((e12 <= med), (e23 <= med), (e31 <= med))
-        faces = faces[:, validId]
+        #e12 = np.linalg.norm(vertex[faces[1,:],:] - vertex[faces[0,:],:],axis=1)
+        #e23 = np.linalg.norm(vertex[faces[2,:],:] - vertex[faces[1,:],:],axis=1)
+        #e31 = np.linalg.norm(vertex[faces[0,:],:] - vertex[faces[2,:],:],axis=1)
+        #med = np.median(np.concatenate((e12,e23,e31)))
+        #validId = np.logical_and((e12 <= med), (e23 <= med), (e31 <= med))
+        #faces = faces[:, validId]
         
         self.vertex=vertex.T
         self.faces=faces
