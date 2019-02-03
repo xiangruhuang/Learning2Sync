@@ -31,7 +31,10 @@ reader = Reader()
 PATH_SUMMARY = '%s/relative_pose/summary/{}/{}/{}.mat' % home
 for sceneid in reader.list_scenes(dataset):
     scanids = reader.get_scanids(dataset, sceneid)
-    
+    output_mat = PATH_SUMMARY.format(dataset, source, sceneid)
+    if os.path.exists(output_mat):
+      continue
+ 
     n = len(scanids)
     scanid_map = {str(scanid): i for i, scanid in enumerate(scanids)}
     T = np.zeros((n*4, n*4))

@@ -101,7 +101,28 @@ def angular_distance_np(R_hat, R):
     metric = np.arccos(((trace - 1)/2).clip(-1,1)) / np.pi * 180.0
     return metric
 
+
+def read_super4pcs(rel):
+    if not os.path.exists(rel):
+      return np.eye(4)
+    with open(rel, 'r') as fin:
+        lines = fin.readlines()
+        if len(lines) == 0:
+            return np.eye(4)
+        T = []
+        for line in lines:
+            if 'MATRIX' in line:
+                continue
+            if 'VERSION' in line:
+                continue
+            if len(line.strip()) < 1:
+                continue
+            #print(line, len(line.strip()))
+            T.append([float(token) for token in line.strip().split(' ') if len(token) > 0])
+        T = np.array(T)
+        assert T.shape == (4, 4)
+    return T
+
 if __name__ == '__main__':
     print('home dir = %s' % env())
     
-

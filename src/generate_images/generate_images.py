@@ -122,7 +122,7 @@ def main():
     with open('%s.list' % args.dataset, 'r') as fin:
         shapelist = [line.strip() for line in fin.readlines()]
         args.shapeid = shapelist[args.modelid]
-    source =  args.source
+    source = args.source
 
     """ Reading Summarize Relative Poses """
     PATH_SUMMARY = '%s/relative_pose/summary/%s/%s/%s.mat' % (home, args.dataset, args.source, args.shapeid)
