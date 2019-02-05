@@ -20,7 +20,7 @@ def __get_label__(Rij, tij, Ti, Tj):
     label = 0.0
     err_R = angular_distance_np(Rij[np.newaxis, :, :], Rjstar.dot(Ristar.T)[np.newaxis, :, :]).sum()
     err_T = np.linalg.norm(Rij.dot(tistar) + tij - tjstar, 2)
-    if err_R < 30.0:
+    if err_R < 30.0 and err_T < 0.2:
         label = 1.0
     else:
         label = 0.0
@@ -143,28 +143,26 @@ def main():
         dump_folder = '/media/xrhuang/DATA1/%s/%s' % (args.dataset, args.shapeid)
     pathlib.Path(dump_folder).mkdir(exist_ok=True, parents=True)
     
-    for i in range(n):
-        for j in range(i+1, n):
-            name = '%d_%d' % (i, j)
-            if not (name == args.remake):
-                continue
-            print(i, j)
-            #i, j = [int(token) for token in mat_file.split('/')[-1].split('.')[0].split('_')[:2]]
-            #mat = sio.loadmat(mat_file)
-            Tij = summary_mat['T'][i*4:(i+1)*4, j*4:(j+1)*4]
-            
-            assert abs(Tij[3, 3] - 1.0) < 1e-6
+    i, j = [int(token) for token in args.remake.split('_')]
+    assert i < j
+    name = '%d_%d' % (i, j)
+    print(i, j)
+    #i, j = [int(token) for token in mat_file.split('/')[-1].split('.')[0].split('_')[:2]]
+    #mat = sio.loadmat(mat_file)
+    Tij = summary_mat['T'][i*4:(i+1)*4, j*4:(j+1)*4]
+    
+    assert abs(Tij[3, 3] - 1.0) < 1e-6
 
-            Ti = T[i]; vi = v[i]; idx1 = idx[i]
-            Tj = T[j]; vj = v[j]; idx2 = idx[j]
-            
-            assert vi.shape[0] == 3
-            name = '%d_%d_%s_recover.mat' % (i, j, source)
-            
-            image, label, Tij_icp = generate_pair(Tij, i, j, vi, vj, Ti, Tj, idx1, idx2, False, source)
-            print(dump_folder, name)
-            sio.savemat('%s/%s' % (dump_folder, name), {'image': image, 'label': label, 'Tij_icp': Tij_icp}, do_compression=False)
-            mat = sio.loadmat('%s/%s' % (dump_folder, name))
+    Ti = T[i]; vi = v[i]; idx1 = idx[i]
+    Tj = T[j]; vj = v[j]; idx2 = idx[j]
+    
+    assert vi.shape[0] == 3
+    name = '%d_%d_%s_recover.mat' % (i, j, source)
+    
+    image, label, Tij_icp = generate_pair(Tij, i, j, vi, vj, Ti, Tj, idx1, idx2, False, source)
+    print(dump_folder, name)
+    sio.savemat('%s/%s' % (dump_folder, name), {'image': image, 'label': label, 'Tij_icp': Tij_icp}, do_compression=True)
+    mat = sio.loadmat('%s/%s' % (dump_folder, name))
         
 
  

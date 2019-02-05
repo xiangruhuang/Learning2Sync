@@ -74,6 +74,7 @@ class MyDataset(Dataset):
             except Exception as e:
                 print(e)
                 print('%s is corrupted.' % self.files[index])
+                os.system('rm %s' % self.files[index])
                 flag = False
                 index = index + 1
                 if index >= len(self.files):
