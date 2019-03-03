@@ -1,10 +1,10 @@
 # Learning Transformation Synchronization
 ![alt tag](https://www.cs.utexas.edu/~xrhuang/Learning2Sync/RecurrentNetwork1.png)
 Python implementation of our approach on Learning Transformation Synchronization.
-<p><a href="https://arxiv.org/abs/1901.09458" rel="nofollow"><strong>Here is the link to our ArXiv Paper.</strong></a><br>
-</p>
 Note that the code/doc will be updated after CVPR camera-ready version.
 For any questions about the code, please contact <strong>xrhuang@cs.utexas.edu</strong>.
+<p><a href="https://arxiv.org/abs/1901.09458" rel="nofollow"><strong>Here is the link to our ArXiv Paper.</strong></a><br>
+</p>
 
 ## Data Acquisition:
 The datasets we used are "Redwood" and "Scannet". 
