@@ -1,7 +1,7 @@
 # Learning Transformation Synchronization
 ![alt tag](https://www.cs.utexas.edu/~xrhuang/Learning2Sync/RecurrentNetwork1.png)
 Python implementation of our approach on Learning Transformation Synchronization.
-Here is the link to <p><a href="https://arxiv.org/abs/1901.09458" rel="nofollow"><strong>Our ArXiv Paper.</strong></a><br>
+<p><a href="https://arxiv.org/abs/1901.09458" rel="nofollow"><strong>Here is the link to our ArXiv Paper.</strong></a><br>
 </p>
 
 
