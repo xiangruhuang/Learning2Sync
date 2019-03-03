@@ -1,6 +1,14 @@
 # Learning Transformation Synchronization
 ![alt tag](https://www.cs.utexas.edu/~xrhuang/Learning2Sync/RecurrentNetwork1.png)
 Python implementation of our approach on Learning Transformation Synchronization.
+<p><a href="http://markdown-here.com" rel="nofollow"><strong>Visit the website.</strong></a><br>
+<a href="https://chrome.google.com/webstore/detail/elifhakcjgalahccnjkneoccemfahfoa" rel="nofollow"><strong>Get it for Chrome.</strong></a><br>
+<a href="https://addons.mozilla.org/en-US/firefox/addon/markdown-here/" rel="nofollow"><strong>Get it for Firefox.</strong></a><br>
+<a href="https://s3.amazonaws.com/markdown-here/markdown-here.safariextz" rel="nofollow"><strong>Get it for Safari.</strong></a><br>
+<a href="https://addons.mozilla.org/en-US/thunderbird/addon/markdown-here/" rel="nofollow"><strong>Get it for Thunderbird and Postbox.</strong></a><br>
+<a href="https://addons.opera.com/en/extensions/details/markdown-here/" rel="nofollow"><strong>Get it for Opera.</strong></a><br>
+<a href="https://groups.google.com/forum/?fromgroups#!forum/markdown-here/" rel="nofollow"><strong>Discuss it and ask questions in the Google Group.</strong></a><br></p>
+
 
 ## Data Acquisition:
 The datasets we used are "Redwood" and "Scannet". 
